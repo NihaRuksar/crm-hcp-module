@@ -1,0 +1,8 @@
+**/benv/
+**/node_modules/
+**/__pycache__/
+**/*.pyc
+**/.env
+**/build/
+.DS_Store
+Thumbs.db
