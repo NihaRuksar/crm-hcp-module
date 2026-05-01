@@ -12,7 +12,7 @@
 
 *An AI-powered CRM for life science field reps — describe your HCP interaction naturally, and the AI fills every field automatically using LangGraph agents.*
 
-[Live Demo](#) · [Report Bug](#) · [Request Feature](#)
+[Live Demo](https://drive.google.com/file/d/1ZsiYqo4uRYcf3u5ZH5q9dYZRz5xsRrZ_/view?usp=sharing)
 
 </div>
 
