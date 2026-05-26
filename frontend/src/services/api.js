@@ -1,4 +1,4 @@
-const BASE_URL = "https://crm-hcp-module-production.up.railway.app/";
+const BASE_URL = "https://crm-hcp-module-production.up.railway.app";
 
 export async function sendChatMessage(message, tool, interactionId, currentData) {
   const response = await fetch(BASE_URL + "/chat", {
