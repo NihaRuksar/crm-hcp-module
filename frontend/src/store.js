@@ -1,32 +1,29 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-  interaction: {
-    formData: {
-      hcp: '',
-      type: '',
-      date: '',
-      time: '',
-      location: '',
-      topics: '',
-      products: '',
-      materials: [],
-      samples: [],
-      sentiment: 'neutral',
-      outcomes: '',
-      followup: '',
-      summary: '',
-    },
-    messages: [],
-    isAIFilled: false,
-    formStatus: 'draft',
-    currentInteractionId: null,
-  },
+const initialFormData = {
+  hcp: '',
+  type: '',
+  date: '',
+  time: '',
+  location: '',
+  topics: '',
+  products: '',
+  materials: [],
+  samples: [],
+  sentiment: 'neutral',
+  outcomes: '',
+  followup: '',
+  summary: '',
 };
 
 const interactionSlice = createSlice({
   name: 'interaction',
-  initialState: initialState.interaction,
+  initialState: {
+    formData: initialFormData,
+    isAIFilled: false,
+    formStatus: 'draft',
+    currentInteractionId: null,
+  },
   reducers: {
     setFormField: (state, action) => {
       state.formData[action.payload.field] = action.payload.value;
@@ -49,17 +46,53 @@ const interactionSlice = createSlice({
       state.formData.samples.splice(action.payload, 1);
     },
     clearForm: (state) => {
-      state.formData = initialState.interaction.formData;
-      state.formStatus = 'draft';
+      state.formData = initialFormData;
       state.isAIFilled = false;
+      state.formStatus = 'draft';
       state.currentInteractionId = null;
     },
     saveInteraction: (state, action) => {
       state.currentInteractionId = action.payload;
       state.formStatus = 'saved';
     },
+    populateForm: (state, action) => {
+      state.formData = {
+        ...state.formData,
+        ...action.payload,
+      };
+      state.isAIFilled = true;
+      state.formStatus = 'ai_filled';
+    },
+    partialUpdateForm: (state, action) => {
+      state.formData = {
+        ...state.formData,
+        ...action.payload,
+      };
+      state.formStatus = 'edited';
+    },
+  },
+});
+
+const chatSlice = createSlice({
+  name: 'chat',
+  initialState: {
+    messages: [],
+    activeTool: 'log_interaction',
+    isTyping: false,
+    suggestions: [],
+  },
+  reducers: {
     addMessage: (state, action) => {
       state.messages.push(action.payload);
+    },
+    setTyping: (state, action) => {
+      state.isTyping = action.payload;
+    },
+    setActiveTool: (state, action) => {
+      state.activeTool = action.payload;
+    },
+    setSuggestions: (state, action) => {
+      state.suggestions = action.payload;
     },
   },
 });
@@ -73,11 +106,20 @@ export const {
   removeSample,
   clearForm,
   saveInteraction,
-  addMessage,
+  populateForm,
+  partialUpdateForm,
 } = interactionSlice.actions;
+
+export const {
+  addMessage,
+  setTyping,
+  setActiveTool,
+  setSuggestions,
+} = chatSlice.actions;
 
 export const store = configureStore({
   reducer: {
     interaction: interactionSlice.reducer,
+    chat: chatSlice.reducer,
   },
 });
