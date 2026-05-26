@@ -4,6 +4,7 @@ langgraph
 langchain
 langchain-groq
 sqlalchemy
-psycopg2-binary
+pymysql
 python-dotenv
 pydantic
+cryptography
