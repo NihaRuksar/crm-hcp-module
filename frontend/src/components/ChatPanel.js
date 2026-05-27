@@ -110,30 +110,44 @@ export default function ChatPanel() {
         }
       }
 
-      // ── TOOL 2: EDIT INTERACTION ─────────────────────────────────────────
+     // ── TOOL 2: EDIT INTERACTION ─────────────────────────────────────────
       else if (toolUsed === 'edit_interaction') {
         try {
           var changes = {};
+          var changedFields = [];
+
           if (data && data.changes && typeof data.changes === 'object') {
             changes = data.changes;
           } else if (data && typeof data === 'object') {
             changes = data;
           }
-          var changed = [];
-          try {
-            changed = Object.entries(changes).filter(function(pair) {
-              return pair[1] !== null && pair[1] !== undefined;
-            });
-          } catch(e) {
-            changed = [];
+
+          if (data && Array.isArray(data.changed_fields) && data.changed_fields.length > 0) {
+            changedFields = data.changed_fields;
+          } else {
+            try {
+              changedFields = Object.entries(changes)
+                .filter(function(pair) {
+                  return pair[1] !== null && pair[1] !== undefined;
+                })
+                .map(function(pair) { return pair[0]; });
+            } catch(e) {
+              changedFields = [];
+            }
           }
-          if (changed.length > 0) {
-            responseText = '✏️ Updated ' + changed.length + ' field(s): ' + changed.map(function(pair) { return pair[0]; }).join(', ') + '.';
+
+          if (changedFields.length > 0) {
+            responseText = '✏️ Updated ' + changedFields.length + ' field(s): ' + changedFields.join(', ') + '.';
             fields = {};
-            changed.forEach(function(pair) { fields[pair[0]] = String(pair[1]); });
+            changedFields.forEach(function(key) {
+              if (changes[key] !== null && changes[key] !== undefined) {
+                fields[key] = String(changes[key]);
+              }
+            });
             dispatch(partialUpdateForm(changes));
           } else {
-            responseText = '✏️ Edit processed. Please check the form fields.';
+            responseText = '✏️ Edit processed successfully.';
+            fields = null;
           }
         } catch(e) {
           responseText = '✏️ Edit processed successfully.';
